@@ -186,47 +186,4 @@ public class MediaPlayerController {
         // return User.getUserID();
         return 1; // A placeholder; replace with actual logic
     }
-    private int getNextPositionInPlaylist(int playlistId) {
-        // Replace with your logic to determine the next position in the playlist
-        // You can query the database to find the highest position for the given playlist and increment it by 1.
-        // For example, you can execute a SQL query to get the max position for the given playlist and add 1 to it.
-        return 1; // A placeholder; replace with actual logic
-    }
-
-    public void insertSongIntoPlaylist(ActionEvent actionEvent) {
-        int playlistId = 1;
-        int songId = 2;
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            // Set up the database connection
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/musicifydb", "root", "Kavushik@2004");
-
-            // Prepare the SQL statement to insert the song into the playlist
-            String insertSQL = "INSERT INTO playlist_songs (playlist_id, song_id, position) VALUES (?, ?, ?)";
-            preparedStatement = connection.prepareStatement(insertSQL);
-            preparedStatement.setInt(5, playlistId);
-            preparedStatement.setInt(6, songId);
-            preparedStatement.setInt(7, 1); // Get the next position
-
-            // Execute the SQL statement
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                System.out.println("Song inserted into playlist: Playlist " + playlistId + ", Song " + songId);
-            } else {
-                System.out.println("Failed to insert song into playlist.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (preparedStatement != null) preparedStatement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

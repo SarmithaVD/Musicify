@@ -66,8 +66,14 @@ public class Loginpage extends Application {
         boolean isAuthenticated = dbConnection.authenticateUser(username, password);
 
         if (isAuthenticated) {
-            // User is authenticated, you can navigate to another scene or perform further actions.
+            // User is authenticated, close the login stage and open the main stage
             System.out.println("Authentication successful");
+            mainStage.close();
+
+            // Create and open the main stage
+            MediaPlayerController mediaPlayerController = new MediaPlayerController();
+            Stage mediaPlayerStage = new Stage();
+            mediaPlayerController.start(mediaPlayerStage);
         } else {
             System.out.println("Authentication failed");
         }
