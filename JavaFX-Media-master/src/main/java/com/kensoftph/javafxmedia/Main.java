@@ -10,12 +10,12 @@ import java.sql.Connection;
 
 public class Main extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("media-player.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Musicify");
-        stage.setScene(scene);
-        stage.show();
+        primaryStage.setTitle("Musicify");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public static void main(String[] args) {

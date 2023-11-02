@@ -33,7 +33,6 @@
                   <Label fx:id="lblDuration" text="Duration: 00 / 00" />
                   <Button text="Next Song" onAction="#selectNextSong" />
                   <Button text="Create PlayList" onAction="#createPlaylist" />
-                  <Button text="Add Songs to the PlayList" onAction="#insertSongIntoPlaylist" />
                </children>
             </HBox>
          </children>

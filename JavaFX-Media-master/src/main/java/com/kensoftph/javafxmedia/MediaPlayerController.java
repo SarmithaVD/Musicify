@@ -1,14 +1,18 @@
 package com.kensoftph.javafxmedia;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+
+import java.io.IOException;
 import java.sql.DriverManager;
 import javafx.scene.Scene;
 
@@ -37,7 +41,13 @@ public class MediaPlayerController {
     private Media media;
     private MediaPlayer mediaPlayer;
     private boolean isPlayed = false;
-
+    public void start(Stage mediaPlayerStage) throws IOException {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("media-player.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            mediaPlayerStage.setTitle("Musicify");
+            mediaPlayerStage.setScene(scene);
+            mediaPlayerStage.show();
+        }
     public MediaPlayerController() {
     }
 
@@ -181,9 +191,8 @@ public class MediaPlayerController {
         return generatedPlaylistId;
     }
     private int getUserIdForCurrentUser() {
-        // Replace with your logic to retrieve the user ID from your authentication system
-        // For example, if you have a User class with a getUserID() method:
-        // return User.getUserID();
-        return 1; // A placeholder; replace with actual logic
+        return 1;
     }
+
+
 }

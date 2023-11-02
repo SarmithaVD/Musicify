@@ -6,14 +6,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+
+import java.io.IOException;
 
 public class Loginpage extends Application {
     private final DBconnection dbConnection; // Database connection instance
@@ -38,7 +39,13 @@ public class Loginpage extends Application {
 
         // Create a login button
         Button loginButton = new Button("Login");
-        loginButton.setOnAction(event -> handleLogin(usernameField.getText(), passwordField.getText()));
+        loginButton.setOnAction(event -> {
+            try {
+                handleLogin(usernameField.getText(), passwordField.getText());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         // Create a GridPane to hold the login elements
         GridPane gridPane = new GridPane();
@@ -61,16 +68,15 @@ public class Loginpage extends Application {
         primaryStage.show();
     }
 
-    private void handleLogin(String username, String password) {
-        // Implement your login logic here
+    public void handleLogin(String username, String password) throws IOException {
+
         boolean isAuthenticated = dbConnection.authenticateUser(username, password);
 
         if (isAuthenticated) {
-            // User is authenticated, close the login stage and open the main stage
+            // User is authenticated, you can navigate to another scene or perform further actions.
             System.out.println("Authentication successful");
-            mainStage.close();
 
-            // Create and open the main stage
+            // Create and open the main stage (music player)
             MediaPlayerController mediaPlayerController = new MediaPlayerController();
             Stage mediaPlayerStage = new Stage();
             mediaPlayerController.start(mediaPlayerStage);
