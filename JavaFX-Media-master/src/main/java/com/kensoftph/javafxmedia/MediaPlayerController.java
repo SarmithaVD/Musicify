@@ -23,7 +23,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+
 public class MediaPlayerController {
+
+    private String currentSongTitle;
+    private String currentArtistId;
+    private String currentGenre;
 
     @FXML
     private Button btnPlay;
@@ -97,7 +106,101 @@ public class MediaPlayerController {
             Duration totalDuration = media.getDuration();
             slider.setMax(totalDuration.toSeconds());
             lblDuration.setText("Duration: 00 / " + (int) media.getDuration().toSeconds());
+
+            // Get details of the currently playing song from the media file
+            currentSongTitle = getSongTitleFromMedia(url);
+            currentArtistId = getArtistIdFromDatabase(currentSongTitle);
+            currentGenre = getGenreFromDatabase(url);
         });
+    }
+
+    private String getSongTitleFromMedia(String url) {
+        File file = new File(url);
+        try {
+            AudioFile audioFile = AudioFileIO.read(file);
+            Tag tag = audioFile.getTag();
+
+            return tag.getFirst(FieldKey.TITLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String getArtistIdFromDatabase(String songTitle) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String artistId = null;
+
+        try {
+            // Set up the database connection
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/musicifydb", "root", "Kavushik@2004");
+
+            // Prepare the SQL statement to retrieve artist ID based on song title
+            String query = "SELECT artist_id FROM songs WHERE title = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, songTitle);
+
+            // Execute the SQL statement
+            resultSet = preparedStatement.executeQuery();
+
+            // Retrieve the artist ID from the result set
+            if (resultSet.next()) {
+                artistId = resultSet.getString("artist_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close resources
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return artistId;
+    }
+
+    private String getGenreFromDatabase(String songTitle) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String genre = null;
+
+        try {
+            // Set up the database connection
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/musicifydb", "root", "Kavushik@2004");
+
+            // Prepare the SQL statement to retrieve genre based on song title
+            String query = "SELECT genre FROM songs WHERE title = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, songTitle);
+
+            // Execute the SQL statement
+            resultSet = preparedStatement.executeQuery();
+
+            // Retrieve the genre from the result set
+            if (resultSet.next()) {
+                genre = resultSet.getString("genre");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close resources
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return genre;
     }
 
     @FXML
@@ -130,6 +233,9 @@ public class MediaPlayerController {
             int playlistId = insertPlaylistIntoDatabase(playlistName);
 
             if (playlistId > 0) {
+                // Add similar songs to the playlist
+                addSimilarSongsToPlaylist(playlistId);
+
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Success");
                 alert.setHeaderText(null);
@@ -145,6 +251,46 @@ public class MediaPlayerController {
                 alert.showAndWait();
             }
         });
+    }
+
+    private void addSimilarSongsToPlaylist(int playlistId) {
+        // Get the currently playing song details
+        String currentSongTitle = "Song Title"; // Replace with actual song title
+        int currentArtistId = 1; // Replace with actual artist ID
+        String currentGenre = "Pop"; // Replace with actual genre
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            // Set up the database connection
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/musicifydb", "root", "Kavushik@2004");
+
+            // Prepare the SQL statement to insert similar songs into the playlist
+            String insertSimilarSongsSQL = "INSERT INTO playlist_songs (playlist_id, song_id, position) " +
+                    "SELECT ?, song_id, 0 FROM songs " +
+                    "WHERE artist_id = ? AND genre = ? AND song_id <> (SELECT song_id FROM songs WHERE title = ?) " +
+                    "ORDER BY RAND() LIMIT 5";
+
+            preparedStatement = connection.prepareStatement(insertSimilarSongsSQL);
+            preparedStatement.setInt(1, playlistId);
+            preparedStatement.setInt(2, currentArtistId);
+            preparedStatement.setString(3, currentGenre);
+            preparedStatement.setString(4, currentSongTitle);
+
+            // Execute the SQL statement
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private int insertPlaylistIntoDatabase(String playlistName) {
