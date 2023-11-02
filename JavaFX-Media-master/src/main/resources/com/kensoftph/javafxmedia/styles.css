@@ -1,0 +1,17 @@
+/* styles.css */
+
+/* Define styles for the login background */
+#login-background {
+    -fx-background-image: url("file:E:\SEM 5 Package\JAVA\images\\zen.jpg");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+/* Define other styles for your application */
+.button {
+    -fx-background-color: #0077cc;
+    -fx-text-fill: white;
+}
+
+/* Add more styles as needed */
