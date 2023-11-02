@@ -16,6 +16,12 @@ public class DataBase {
             connection = DriverManager.getConnection(jdbcURL, username, password);
             if (connection != null) {
                 System.out.println("Connected to the database");
+
+                // Load data from CSV files
+                loadSongsData(connection, "songs.csv");
+                loadArtistsData(connection, "artists.csv");
+                loadPlaylistsData(connection, "playlists.csv");
+
                 //Example: Insert a User
                 insertUser(connection,"Kavushik","ME");
 
@@ -46,6 +52,37 @@ public class DataBase {
             }
         }
     }
+
+    private static void loadSongsData(Connection connection, String filePath) throws SQLException {
+        String loadSQL = "LOAD DATA INFILE ? INTO TABLE songs FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(loadSQL)) {
+            preparedStatement.setString(1, filePath);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println("Loaded " + rowsAffected + " rows into songs table");
+        }
+    }
+
+    private static void loadArtistsData(Connection connection, String filePath) throws SQLException {
+        String loadSQL = "LOAD DATA INFILE ? INTO TABLE artists FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(loadSQL)) {
+            preparedStatement.setString(1, filePath);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println("Loaded " + rowsAffected + " rows into artists table");
+        }
+    }
+
+    private static void loadPlaylistsData(Connection connection, String filePath) throws SQLException {
+        String loadSQL = "LOAD DATA INFILE ? INTO TABLE playlists FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(loadSQL)) {
+            preparedStatement.setString(1, filePath);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println("Loaded " + rowsAffected + " rows into playlists table");
+        }
+    }
+
     private static void insertUser(Connection connection, String username, String password) throws SQLException {
         String insertSQL = "INSERT INTO users (username, password) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
