@@ -11,6 +11,13 @@ import javafx.util.Duration;
 import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Background;
+import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.sql.DriverManager;
@@ -46,10 +53,39 @@ public class MediaPlayerController {
     private Button createPlaylistButton;
     @FXML
     private TextField playlistNameField;
+    @FXML
+    private BorderPane borderPane;
+
+    public void initialize() {
+        borderPane.setMinHeight(514.0);
+        borderPane.setMinWidth(1080.0);
+        borderPane.setPrefHeight(514.0);
+        borderPane.setPrefWidth(1080.0);
+        borderPane.setBackground(new Background(background));
+    }
 
     private Media media;
     private MediaPlayer mediaPlayer;
     private boolean isPlayed = false;
+
+    // Load the background image
+    Image backgroundImage = new Image("file:./images/musicplayer.jpg");
+
+    // Set the desired size for the background image
+    double backgroundImageWidth = 1080;
+    double backgroundImageHeight = 514;
+
+    // Create a BackgroundSize with the desired width and height
+    BackgroundSize backgroundSize = new BackgroundSize(backgroundImageWidth, backgroundImageHeight, true, true, true, false);
+
+    // Create a BackgroundImage
+    BackgroundImage background = new BackgroundImage(
+            backgroundImage,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.DEFAULT,
+            backgroundSize);
+
     public void start(Stage mediaPlayerStage) throws IOException {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("media-player.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
