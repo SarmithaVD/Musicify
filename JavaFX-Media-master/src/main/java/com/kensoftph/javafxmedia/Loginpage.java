@@ -6,15 +6,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-
-import java.io.IOException;
 
 public class Loginpage extends Application {
     private final DBconnection dbConnection; // Database connection instance
@@ -31,6 +30,24 @@ public class Loginpage extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Login Page");
 
+        // Load the background image
+        Image backgroundImage = new Image("C:/Users/91944/OneDrive/Pictures/loginpage.png");
+
+        // Set the desired size for the background image
+        double backgroundImageWidth = 1080;
+        double backgroundImageHeight = 608;
+
+        // Create a BackgroundSize with the desired width and height
+        BackgroundSize backgroundSize = new BackgroundSize(backgroundImageWidth, backgroundImageHeight, true, true, true, false);
+
+        // Create a BackgroundImage
+        BackgroundImage background = new BackgroundImage(
+                backgroundImage,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                javafx.scene.layout.BackgroundPosition.DEFAULT,
+                backgroundSize);
+
         // Create the username and password fields
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
@@ -39,47 +56,48 @@ public class Loginpage extends Application {
 
         // Create a login button
         Button loginButton = new Button("Login");
-        loginButton.setOnAction(event -> {
-            try {
-                handleLogin(usernameField.getText(), passwordField.getText());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        loginButton.setOnAction(event -> handleLogin(usernameField.getText(), passwordField.getText()));
+
+        // Add styling to the login button
+        loginButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        loginButton.setPadding(new javafx.geometry.Insets(10));
+
+        // Create a title label
+        Label titleLabel = new Label("Musicify Login");
+        titleLabel.setStyle("-fx-font-size: 20; -fx-font-weight: bold;");
 
         // Create a GridPane to hold the login elements
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        gridPane.add(usernameField, 0, 0);
-        gridPane.add(passwordField, 0, 1);
-        gridPane.add(loginButton, 0, 2);
+        gridPane.add(titleLabel, 0, 0);
+        gridPane.add(usernameField, 0, 1);
+        gridPane.add(passwordField, 0, 2);
+        gridPane.add(loginButton, 0, 3);
 
         // Create a StackPane to overlay the background and the login elements
         StackPane stackPane = new StackPane();
-        stackPane.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, null, null))); // Set the background color
+        stackPane.setBackground(new javafx.scene.layout.Background(background)); // Set the background image
         stackPane.getChildren().addAll(gridPane);
 
+        // Add padding to the StackPane
+        stackPane.setPadding(new javafx.geometry.Insets(20));
+
         // Create the scene
-        Scene scene = new Scene(stackPane, 800, 600);
+        Scene scene = new Scene(stackPane, 1080, 608);
 
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    public void handleLogin(String username, String password) throws IOException {
-
+    private void handleLogin(String username, String password) {
+        // Implement your login logic here
         boolean isAuthenticated = dbConnection.authenticateUser(username, password);
 
         if (isAuthenticated) {
             // User is authenticated, you can navigate to another scene or perform further actions.
             System.out.println("Authentication successful");
-
-            // Create and open the main stage (music player)
-            MediaPlayerController mediaPlayerController = new MediaPlayerController();
-            Stage mediaPlayerStage = new Stage();
-            mediaPlayerController.start(mediaPlayerStage);
         } else {
             System.out.println("Authentication failed");
         }
