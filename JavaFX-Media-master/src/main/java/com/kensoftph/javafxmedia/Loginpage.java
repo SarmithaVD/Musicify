@@ -31,7 +31,7 @@ public class Loginpage extends Application {
         primaryStage.setTitle("Login Page");
 
         // Load the background image
-        Image backgroundImage = new Image("C:/Users/91944/OneDrive/Pictures/loginpage.png");
+        Image backgroundImage = new Image("file:./images/loginpage.png");
 
         // Set the desired size for the background image
         double backgroundImageWidth = 1080;
